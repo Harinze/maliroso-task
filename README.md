@@ -28,7 +28,8 @@ This API provides endpoints for managing products in a store. It includes functi
 
 ## API Documentation
 API documentation is available in API Blueprint format. 
-You can view the documentation by opening the api-documentation.md file. 
+You can view the documentation by opening the api-documentation.html file in your browser. 
+To generate the documentation, follow the instructions in the API Blueprint file.
 
 ## Endpoints
 Create a Product: POST /products
