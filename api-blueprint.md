@@ -76,7 +76,7 @@ This API allows you to manage products in a store.
 
             {
                 "productName": "Updated Product",
-                "description": "This product has been updated",
+                "description": "Description of the product",
                 "amount": 150,
                 "quantity": 20,
                 "price": 75
@@ -90,7 +90,7 @@ This API allows you to manage products in a store.
                 "message": "Product updated successfully",
                 "product": {
                     "productName": "Updated Product",
-                    "description": "This product has been updated",
+                    "description": "Description of the product",
                     "amount": 150,
                     "quantity": 20,
                     "price": 75
@@ -113,10 +113,11 @@ This API allows you to manage products in a store.
                 "message": "Product deleted successfully",
                 "product": {
                     "productName": "Updated Product",
-                    "description": "This product has been updated",
+                    "description": "This product has been deleted",
                     "amount": 150,
                     "quantity": 20,
                     "price": 75
                 }
             }
+
 

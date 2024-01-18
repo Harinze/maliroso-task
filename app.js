@@ -170,7 +170,7 @@ app.post('/place-order', verifyToken, async (req, res) => {
 // Create a product
 app.post('/products', verifyToken, async (req, res) => {
   try {
-    const { productName, description, amount, quantity, price } = req.body;
+    const { productName, description, amount, quantity, price, image } = req.body;
 
     const product = new Product({
       productName,
@@ -178,6 +178,7 @@ app.post('/products', verifyToken, async (req, res) => {
       amount,
       quantity,
       price,
+      image
     });
 
     await product.save();
@@ -191,7 +192,7 @@ app.post('/products', verifyToken, async (req, res) => {
 
 
 // Get all products
-app.get('/products', async (req, res) => {
+app.get('/products', async (_req, res) => {
   try {
     const products = await Product.find();
     res.status(200).json(products);
@@ -210,7 +211,7 @@ app.put('/products/:productId', verifyToken, async (req, res) => {
 
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { productName, description, amount, quantity, price },
+      { productName, description, amount, quantity, price, image },
       { new: true }
     );
 
