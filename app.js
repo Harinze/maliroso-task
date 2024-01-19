@@ -185,8 +185,6 @@ app.post('/placeorder', verifyToken, async (req, res) => {
   }
 });
 
-
-
 // Create a product
 app.post('/createproducts', verifyToken, async (req, res) => {
   try {
@@ -236,22 +234,44 @@ app.get('/products', async (_req, res) => {
   }
 });
 
-
-// Update a product
+// UPDATE THE PRODUCT
 app.put('/products/:productId', verifyToken, async (req, res) => {
   try {
-    const productId = req.params.productId;
-    const { productName, description, quantity, price } = req.body;
+    const { productId } = req.params;
+  
+    const { productName, description, quantity, price, image } = req.body;
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { productName, description, amount, quantity, price, image },
-      { new: true }
-    );
+    const userId = new mongoose.Types.ObjectId(req.decodedToken.userId);
 
-    if (!updatedProduct) {
+    if (![productName, description, quantity, price, image].every(Boolean)) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const user = await User.findOne(userId);
+   
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const product = await Product.findOne({productId});
+    
+    if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
+
+    if (!product.user.equals(userId)) {
+      return res.status(403).json({ error: 'Unauthorized to update this product' });
+    }
+
+    product.set({
+      productName,
+      description,
+      quantity,
+      price,
+      image,
+    });
+
+    const updatedProduct = await product.save();
 
     res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
   } catch (error) {
@@ -260,22 +280,39 @@ app.put('/products/:productId', verifyToken, async (req, res) => {
   }
 });
 
-app.delete('/products/:productId', verifyToken,async (req, res) => {
+
+// DELETE A PRODUCT
+
+app.delete('/products/:productId', verifyToken, async (req, res) => {
   try {
-    const productId = req.params.productId;
+    const { productId } = req.params;
+    const userId = new mongoose.Types.ObjectId(req.decodedToken.userId);
 
-    const deletedProduct = await Product.findByIdAndDelete(productId);
+    const user = await User.findOne(userId);
 
-    if (!deletedProduct) {
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const product = await Product.findOne({ productId });
+
+    if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
+    if (!product.user || !product.user.equals(userId)) {
+      return res.status(403).json({ error: 'Unauthorized to delete this product' });
+    }
+
+     await Product.deleteOne({ productId });
+
+    res.status(200).json({ message: 'Product deleted successfully', product });
   } catch (error) {
     console.error('Error deleting product:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 app.listen(PORT, () => {
