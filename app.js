@@ -289,12 +289,14 @@ app.delete('/products/:productId', verifyToken, async (req, res) => {
     const userId = new mongoose.Types.ObjectId(req.decodedToken.userId);
 
     const user = await User.findOne(userId);
+    console.log("user",user)
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const product = await Product.findOne({ productId });
+    const product = await Product.findOne({productId });
+    console.log("product",product)
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
